@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+    <title>GUM</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <style>
+        body        { padding-top:80px; word-wrap:break-word; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="page-header text-center">
+        <h1><span class="fa fa-anchor"></span><%=`Bienvenido ${user.Nombre}`%></h1>
+        <a href="/logout" class="btn btn-default btn-sm">Cerrar Sesión</a>
+        <!-- Funcionalidad del Subordinado -->
+        <% if(user.RFCE) { %>
+        <a href="/profile/verAsuntos" class="btn btn-default btn-sm">Ver asuntos</a>
+        <% } %>
+        <!-- Funcionalidad del encargado -->
+        <% if(!user.RFCE){%>
+        <a href="/profile/verAsuntosEncargado" class="btn btn-default btn-sm">Ver asuntos</a>
+        <a href="/profile/crearAsunto" class="btn btn-default btn-sm">Crear asunto</a>
+        <%}%>
+    </div>
+
+
+</div>
+</body>
+</html>

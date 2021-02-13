@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>GUM</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <script>
+        function muestra_oculta(id){
+            if (document.getElementById){ //se obtiene el id
+            var el = document.getElementById(id); //se define la variable "el" igual a nuestro div
+            el.style.display = (el.style.display == 'none') ? 'block' : 'none'; //damos un atributo display:none que oculta el div
+            }
+            }
+    </script>
+</head>
+<body>
+<div class="container">
+      <header class="page-header">
+        <ul class="nav nav-pills pull-right">
+          <li class="active"><a href="/profile">Perfil</a></li>
+          <li><a href="/logout">Log out</a></li>
+        </ul>
+        <h1><%=`Bienvenido ${user.Nombre}`%></h1>
+      </header>
+</div>
+<div class="container">
+    <% if(!asuntos || !asuntos.length){%>
+        <h2 aling="center">No Tienes Asutos Pendientes</h2>
+    <%} else {  %>
+    <% for(let i = 0; i < asuntos.length; i++) { %>
+            <article style="border:3px solid black; border-color: blue;border-radius: 15px; margin-top: 10px;" id="<%=asuntos[i].IdAsunto + 'Art'%>">
+                <div>
+                    <h2 role="button" onClick="muestra_oculta('<%=asuntos[i].IdAsunto%>')" style="margin-left: 10px; display: inline;"><%= asuntos[i].Actividad %></h2>
+                    <h4 aling="left" style="margin-left: 10px; color:blue; display: inline;"><%= asuntos[i].Estado %></h4>
+                </div>
+                <div id="<%=asuntos[i].IdAsunto%>" style="word-wrap: break-word; word-break: break-all; margin-right: 10px; margin-left: 10px; margin-top: 5px; display: none;">
+                    <h4>Fecha de creación:<%=asuntos[i].FechaCreacion%></h4>
+                    <h4>Dias de termino:<%=((parseInt(asuntos[i].DiasTermino) === -1) ? 'Concluido' : asuntos[i].DiasTermino) %></h4>
+                    <%= asuntos[i].Descripcion %>
+                </div>
+                <div style="text-align: right; margin-right: 10px; margin-bottom: 10px">
+                    <a href="/profile/verAsuntos/crearActividad/<%=asuntos[i].IdAsunto%>" class="btn btn-primary">Agregar</a>
+                    <button class="btn btn-primary" type="submit" onclick="rechazar('<%=asuntos[i].IdAsunto%>','<%=asuntos[i].RFC%>')">Rechazar</button>
+                    <button class="btn btn-primary" type="submit" onclick="finalizar('<%=asuntos[i].IdAsunto%>','<%=asuntos[i].RFC%>')">Finalizar</button>
+                </div>
+            </article>
+            <%}%>
+    <% } %>
+</div>
+<!-- Simple pop-up dialog box containing a form -->
+<dialog id="favDialog">
+    <form method="dialog">
+            <div class="form-group">
+                <label for="Descripcion">Especifica por qué rechazas el asunto:</label>
+                <textarea class="form-control" name="reason" id="re" maxlength="250" title="Maximo 250 caracteres"></textarea>
+            </div>
+      <menu>
+        <button value="cancel" class="btn btn-warning">Cancel</button>
+        <button id="confirmBtn" class="btn btn-primary" value="default" onclick="submitRechazar()">Confirm</button>
+      </menu>
+    </form>
+  </dialog>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+    var socket = io();
+    function rechazar(asuntoid, rfc){
+        if (typeof document.getElementById('favDialog').showModal === "function") {
+                 document.getElementById('favDialog').showModal();
+        } else {
+             alert("The dialog API is not supported by this browser");
+        }
+        var attribId = document.createAttribute('asId');
+        var attribRFC = document.createAttribute('noRFC');
+        attribId.value = asuntoid;
+        attribRFC.value = rfc;
+        document.getElementById('re').setAttributeNode(attribId);
+        document.getElementById('re').setAttributeNode(attribRFC);
+    }
+    function submitRechazar(){
+        var reason = document.getElementById('re').value;
+        if(reason.trim() === ''){
+            alert('Tienes que especificar por qué rechazas el asunto');
+        } else {
+        var asuntoid = document.getElementById('re').getAttribute('asId')
+        var rfc = document.getElementById('re').getAttribute('noRFC');
+        socket.emit('rechazar', {asuntoid: asuntoid, reason: reason, rfc: rfc});
+        document.getElementById('favDialog').returnValue
+        }
+        
+    }
+
+    function agregar(asuntoid, rfc){
+
+    }
+
+    function finalizar(asuntoid, rfc){
+        socket.emit('concluir', asuntoid);
+    }
+    socket.on('rechazado', (asuntoId) => {
+        var parent = document.getElementById(asuntoId + 'Art');
+        parent.parentNode.removeChild(parent);
+    });
+    socket.on('concluido', (asuntoId) => {
+        var parent = document.getElementById(asuntoId + 'Art');
+        parent.parentNode.removeChild(parent);
+    });
+
+
+
+</script>
+</body>
+</html>

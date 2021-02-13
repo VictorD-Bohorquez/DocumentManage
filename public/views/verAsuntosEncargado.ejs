@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>GUM</title>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <script>
+        function muestra_oculta(id){
+            if (document.getElementById){ //se obtiene el id
+            var el = document.getElementById(id); //se define la variable "el" igual a nuestro div
+            el.style.display = (el.style.display == 'none') ? 'block' : 'none'; //damos un atributo display:none que oculta el div
+            }
+            }
+    </script>
+</head>
+<body>
+<div class="container">
+      <header class="page-header">
+        <ul class="nav nav-pills pull-right">
+          <li class="active"><a href="/profile">Perfil</a></li>
+          <li><a href="/logout">Log out</a></li>
+        </ul>
+        <h1><%=`Bienvenido ${user.Nombre}, estos son los asuntos de tus subordinados: `%></h1>
+      </header>
+</div>
+<div class="container">
+        <ul class="nav nav-tabs">
+          <li class="active"><a data-toggle="tab" href="#rechazados">Rechazados</a></li>
+          <li><a data-toggle="tab" href="#progreso">En Progreso</a></li>
+          <li><a data-toggle="tab" href="#concluido">Concluidos</a></li>
+        </ul>
+      
+        <div class="tab-content">
+          <div id="rechazados" class="tab-pane fade in active">
+            <%  var rechazados = 0;
+             for(let i = 0; i < asuntos.length; i++) { 
+                 if(asuntos[i].Estado === 'Rechazado.'){
+                     rechazados++;
+                 %>
+                    <article style="border:3px solid black; border-color: blue;border-radius: 15px; margin-top: 10px;">
+                        <h2 role="button" onClick="muestra_oculta('<%=asuntos[i].IdAsunto%>')" style="margin-left: 10px"><%= asuntos[i].Actividad %></h2>
+                        <div id="<%=asuntos[i].IdAsunto%>" style="word-wrap: break-word; word-break: break-all; margin-right: 10px; margin-left: 10px; display: none;">
+                                <div style="border:3px solid black; border-color: #00a6cf;border-radius: 15px; margin-top: 10px;" role="button" onClick="muestra_subordinados('<%=asuntos[i].IdAsunto%>')" id="<%=asuntos[i].IdAsunto + 'Sub'%>" style="margin-left: 10px">Mostrar Subordinados encargados.</div>
+                                <br>
+                                <div style="border:3px solid black; border-color: #00a6cf;border-radius: 15px; margin-top: 10px;" role="button" onClick="muestra_rechazo('<%=asuntos[i].IdAsunto%>')" id="<%=asuntos[i].IdAsunto + 'rec'%>" style="margin-left: 10px">Mostrar por qué fue rechazado.</div>
+                                <br>
+                                <h4>Fecha de creación:<%=asuntos[i].FechaCreacion%></h4>
+                                <h4>Dias de termino:<%=((parseInt(asuntos[i].DiasTermino) === -1) ? 'Concluido' : asuntos[i].DiasTermino) %></h4>
+                                Descripción: <%= asuntos[i].Descripcion %>
+                            </div>
+                            <br>
+                    </article>
+                    <%}
+                }
+                if(rechazados === 0){%>
+                <h2>No hay asuntos rechazados.</h2>
+            <% }%>
+          </div>
+          <div id="progreso" class="tab-pane fade">
+                <%  var progreso = 0;
+                for(let i = 0; i < asuntos.length; i++) { 
+                    if(asuntos[i].Estado === 'En progreso.'){
+                        progreso++;
+                    %>
+                       <article style="border:3px solid black; border-color: blue;border-radius: 15px; margin-top: 10px;">
+                           <h2 role="button" onClick="muestra_oculta('<%=asuntos[i].IdAsunto%>')" style="margin-left: 10px"><%= asuntos[i].Actividad %></h2>
+                           <div id="<%=asuntos[i].IdAsunto%>" style="word-wrap: break-word; word-break: break-all; margin-right: 10px; margin-left: 10px; display: none;">
+                               <div style="border:3px solid black; border-color: #00a6cf;border-radius: 15px; margin-top: 10px;" role="button" onClick="muestra_subordinados('<%=asuntos[i].IdAsunto%>')" id="<%=asuntos[i].IdAsunto + 'Sub'%>" style="margin-left: 10px">Mostrar Subordinados encargados.</div>
+                               <br>
+                               <h4>Fecha de creación:<%=asuntos[i].FechaCreacion%></h4>
+                               <h4>Dias de termino:<%=((parseInt(asuntos[i].DiasTermino) === -1) ? 'Concluido' : asuntos[i].DiasTermino) %></h4>
+                               Descripción: <%= asuntos[i].Descripcion %>
+                           </div>
+                           <br>
+                       </article>
+                       <%}
+                   }
+                   if(progreso === 0){%>
+                   <h2>No hay asuntos en progreso.</h2>
+               <% }%>
+          </div>
+          <div id="concluido" class="tab-pane fade">
+                <%  var concluido = 0;
+                for(let i = 0; i < asuntos.length; i++) { 
+                    if(asuntos[i].Estado === 'Concluido.'){
+                        concluido++;
+                    %>
+                       <article style="border:3px solid black; border-color: blue;border-radius: 15px; margin-top: 10px;">
+                           <h2 role="button" onClick="muestra_oculta('<%=asuntos[i].IdAsunto%>')" style="margin-left: 10px"><%= asuntos[i].Actividad %></h2>
+                           <div id="<%=asuntos[i].IdAsunto%>" style="word-wrap: break-word; word-break: break-all; margin-right: 10px; margin-left: 10px; display: none;">
+                                <div style="border:3px solid black; border-color: #00a6cf;border-radius: 15px; margin-top: 10px;" role="button" onClick="muestra_subordinados('<%=asuntos[i].IdAsunto%>')" id="<%=asuntos[i].IdAsunto + 'Sub'%>" style="margin-left: 10px">Mostrar Subordinados encargados.</div>
+                                <br>
+                                <h4>Fecha de creación:<%=asuntos[i].FechaCreacion%></h4>
+                                <h4>Dias de termino:<%=((parseInt(asuntos[i].DiasTermino) === -1) ? 'Concluido' : asuntos[i].DiasTermino) %></h4>
+                                Descripción: <%= asuntos[i].Descripcion %>
+                            </div>
+                            <br>
+                       </article>
+                       <%}
+                   }
+                   if(concluido === 0){%>
+                   <h2>No hay asuntos concluidos.</h2>
+               <% }%>
+          </div>
+        </div>
+      </div>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+    var socket = io();
+    function muestra_subordinados(idAsunto){
+    document.getElementById(idAsunto + 'Sub').innerHTML = "<i>Obteniendo subordinados...</i>";
+    socket.emit('obtener subordinados', idAsunto);
+    }
+    function muestra_rechazo(idAsunto){
+    document.getElementById(idAsunto + 'rec').innerHTML = "<i>Obteniendo informacion de rechazo...</i>";
+    socket.emit('obtener rechazo', idAsunto);
+    }
+    socket.on('subordinados asignados', (result, idAsunto) => {
+        document.getElementById(idAsunto + 'Sub').innerHTML = "Subordinados asignados al asunto: <br>";
+        for (let subor = 0; subor < result.length; subor++) {
+            var element = result[subor];
+            document.getElementById(idAsunto + 'Sub').innerHTML += `<i>${element.ApPaterno} ${element.ApMaterno} ${element.Nombre}</i> <br>`;
+        }
+        document.getElementById(idAsunto + 'Sub').onclick = "";
+        document.getElementById(idAsunto + 'Sub').role = "";
+    });
+    socket.on('info rechazo', (result, idAsunto) => {
+        document.getElementById(idAsunto + 'rec').innerHTML = `<b>Subordinado que rechazó el asunto:</b> <br> <i>${result[0].nombre}</i> <br> <b>Razón del rechazo:</b> <br> <i>${result[0].descripcion}</i> <br>`;
+        document.getElementById(idAsunto + 'rec').onclick = "";
+        document.getElementById(idAsunto + 'rec').role = "";
+    });
+</script>
+</body>
+</html>

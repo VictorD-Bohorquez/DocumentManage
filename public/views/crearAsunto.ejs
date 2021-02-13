@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>GUM</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
+    <style>
+        body        { padding-top:80px; }
+    </style>
+</head>
+<body>
+<div class="container">
+<div class="col-sm-6 col-sm-offset-3">
+    <h1><%=user.Nombre%></h1>
+    <a href="/profile" class="btn btn-default btn-sm">Regresar al perfil</a>
+    <h2>Crear Asunto:</h2>
+    <form action="" method="post">
+        <div class="form-group">
+        <label for="Actividad">Nombre del Asunto:</label>
+        <input class="form-control" type="text" name="Actividad" id="Actividad" maxlength="50" required title="Maximo 50 caracteres">
+        </div>
+        <div class="form-group">
+        <label for="Descripcion">Descripción:</label>
+        <textarea class="form-control" name="Descripcion" id="Descripcion" maxlength="200" required title="Maximo 200 caracteres"></textarea>
+        </div>
+        <div class="form-group">
+        <label for="DiasTermino">Dias para el termino:</label>
+        <input class="form-control" pattern="[0-9]+" type="tel" max="99999999999" name="DiasTermino" id="DiasTermino" title="Solo numeros.">
+        </div>
+        <div class="form-group">
+        <label for="RFCS">Subordinado asignado: </label>
+        <select name="RFCS" id="RFCS">
+            <% if(!sub || !sub.length){%>
+                <option value="null" disabled>No tienes subordinados</option>
+            <%} else {
+            for (let i = 0; i < sub.length; i++) {%>
+                <option value="<%=sub[i].RFC%>"><%=`${sub[i].Nombre} ${sub[i].apPaterno} ${sub[i].apMaterno}`%></option>
+            <%}
+            }%>
+        </select>
+        </div>
+        <button class="btn btn-warning btn-lg" type="submit">Crear</button>
+    </form>
+</div>
+</div>
+</body>
+</html>
